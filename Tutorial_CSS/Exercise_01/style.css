@@ -1,0 +1,23 @@
+body {
+    background-color: black;
+    color: cyan;
+    font-family: "Courier";
+}
+
+h1 {
+    text-align: center;
+    color: #efe2ba;
+    background-color: tomato;
+    margin: 50px;
+    height: 40px;
+    padding: 10px;
+    border-style: solid;
+}
+
+h2 {
+    color: #efe2ba;
+}
+
+a {
+    color: #efe2ba;
+}
