@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>H2 Computing Sign up Form</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <h1>H2 Computing Sign up Form</h1>
+        Please enter your name and particulars below.
+        <form action="exercise_02_response.html">
+            <table>
+                <tr>
+                    <td>First Name:</td>
+                    <td><input name="First Name" type="text", placeholder="First Name"></td>
+                    <td>Last Name:</td>
+                    <td><input name="Last Name" type="text", placeholder="Last Name"></td>
+                </tr>
+                <tr>
+                    <td>Email:</td>
+                    <td><input name="Email", type="text", placeholder="name@email.com"></td>
+                    <td>Contact:</td>
+                    <td><input name="Contact", type="text"></td>
+                </tr>
+                <tr>
+                    <td>Class:</td>
+                    <td><input name="Class", type="text"></td>
+                    <td>Gender:</td>
+                    <td>
+                        <select name="Gender">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Date of Birth:</td>
+                    <td><input name="DoB", type="date", value="2020-01-01"></td>
+                </tr>
+            </table>
+
+            <p>Subject Combination</p>
+            <p><input name="option1", type="radio">P CP M E</p>
+            <p><input name="option2", type="radio">C CP M E</p>
+            <p><input name="option3", type="radio">Other: <input name="otheroption", type="text"></p>
+
+            <p><input type="submit" id="submit"></p>
+        </form>
+    </body>
+</html>

@@ -1,0 +1,22 @@
+body {
+    font-family: sans-serif;
+}
+
+h1 {
+    text-align: center;
+    margin: 50px;
+    height: 40px;
+    padding: 10px;
+    border-style: solid;
+    border-color: darkblue;
+}
+
+td {
+    border-style: solid;
+    border-color: darkblue;
+}
+
+#submit {
+    background-color: darkblue;
+    color: white;
+}
