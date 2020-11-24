@@ -7,7 +7,81 @@
         {% extends "base.html" %}
         {% block content %}
         <h1>Search by Instrument</h1>
-        results
+
+        {% if valid == False %}
+        Invalid Asset ID.
+        <p><a href="{{ url_for('search_instrument') }}">Back</a></p>
+        
+        {% else %}
+        <p>Showing results for Asset ID of <b>{{asset_id}}</b>.</p>
+        <p><a href="{{ url_for('search_instrument') }}">Back</a></p>
+
+        <h2>Instrument Information</h2>
+        <table>
+            <tr>
+                <th>Instru SN</th>
+                <td>{{instru_info[1]}}</td>
+            </tr>
+            <tr>
+                <th>Section</th>
+                <td>{{instru_info[2]}}</td>
+            </tr>
+            <tr>
+                <th>Model</th>
+                <td>{{instru_info[3]}}</td>
+            </tr>
+            <tr>
+                <th>Value</th>
+                <td>{{instru_info[4]}}</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>{{instru_info[5]}}</td>
+            </tr>
+        </table>
+
+        <h2>Ownership Information</h2>
+        {% if owned == False %}
+        <p>This instrument is not owned by anyone currently.</p>
+        {% else %}
+        <p>This instrument is owned by student:</p>
+        <table>
+            <tr>
+                <th>Matric No</th>
+                <td>{{ownership_info[0]}}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ownership_info[1]}}</td>
+            </tr>
+            <tr>
+                <th>Class</th>
+                <td>{{ownership_info[2]}}</td>
+            </tr>
+        </table>
+        {% endif %}
+
+        <h2>Repair Log</h2>
+        tbc
+
+        <h2>Loan Log</h2>
+        <table>
+            <tr>
+                <th>Loan No</th>
+                <th>Matric No</th>
+                <th>Out Date</th>
+                <th>In Date</th>
+            </tr>
+            {% for record in loan_info %}
+            <tr>
+                <td>{{record[0]}}</td>
+                <td>{{record[1]}}</td>
+                <td>{{record[2]}}</td>
+                <td>{{record[3]}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
         {% endblock %}
     </body>
 </html>

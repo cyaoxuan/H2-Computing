@@ -7,7 +7,10 @@
         {% extends "base.html" %}
         {% block content %}
         <h1>Search by Student</h1>
-        search
+        <form action="{{ url_for('search_student') }}", method="POST">
+            <p>Matric No: <input type="text" name="matric_no"></p>
+            <input type="submit" value="Search">
+        </form>
         {% endblock %}
     </body>
 </html>

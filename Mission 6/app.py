@@ -47,7 +47,7 @@ def display_stock():
     stock_data = cursor.fetchall()
     cursor.close()
     db.close()
-    
+
     return render_template("display/display_stock.html", stock_data=stock_data)
 
 @app.route("/display/student/")
@@ -78,14 +78,169 @@ def search_instrument():
     if request.method == "GET":
         return render_template("search/search_instrument_GET.html")
     else:
-        return render_template("search/search_instrument_POST.html")
+        asset_id = request.form['asset_id']
+
+        # check if asset_id is valid
+        query = """
+        SELECT AssetID
+        FROM Instrument
+        """
+        db = sqlite3.connect("band.db")
+        cursor = db.execute(query)
+        temp = cursor.fetchall()
+        cursor.close()
+        db.close()
+        valid_asset_ids = []
+        for row in temp:
+            valid_asset_ids.append(row[0])
+
+        if asset_id not in valid_asset_ids:
+            return render_template("search/search_instrument_POST.html", valid=False)
+        else:
+            # valid asset_id
+            # instrument info
+            query = """
+            SELECT *
+            FROM Instrument
+            WHERE AssetID = ?
+            """
+            db = sqlite3.connect("band.db")
+            cursor = db.execute(query, (asset_id,))
+            instru_info = cursor.fetchone()
+            cursor.close()
+            db.close()
+
+            # ownership info
+            query = """
+            SELECT StudentInstrument.MatricNo
+            FROM StudentInstrument
+            WHERE AssetID = ?
+            """
+            db = sqlite3.connect("band.db")
+            cursor = db.execute(query, (asset_id,))
+            ownership_info = cursor.fetchone()
+            cursor.close()
+            db.close()
+            if ownership_info == None:
+                # instru does not have an attached owner
+                owned = False
+            else:
+                owned = True
+                query = """
+                SELECT StudentInstrument.MatricNo, Student.Name, Student.Class
+                FROM StudentInstrument, Student
+                WHERE StudentInstrument.MatricNo = Student.MatricNo
+                AND AssetID = ?
+                """
+                db = sqlite3.connect("band.db")
+                cursor = db.execute(query, (asset_id,))
+                ownership_info = cursor.fetchone()
+                cursor.close()
+                db.close()
+
+            # repair records
+            # TBC
+
+            # loan records
+            query = """
+            SELECT LoanNo, MatricNo, OutDate, InDate
+            FROM Loan
+            WHERE AssetID = ?
+            ORDER BY InDate
+            ORDER BY LoanNo
+            """
+            db = sqlite3.connect("band.db")
+            cursor = db.execute(query, (asset_id,))
+            loan_info = cursor.fetchall()
+            cursor.close()
+            db.close()
+            
+            return render_template("search/search_instrument_POST.html", asset_id=asset_id, valid=True,\
+                 instru_info=instru_info, owned=owned, ownership_info=ownership_info, loan_info=loan_info)
 
 @app.route("/search/student/", methods=["GET", "POST"])
 def search_student():
     if request.method == "GET":
         return render_template("search/search_student_GET.html")
     else:
-        return render_template("search/search_student_POST.html")
+        matric_no = request.form['matric_no']
+
+        # check if matric_no is valid
+        query = """
+        SELECT MatricNo
+        FROM Student
+        """
+        db = sqlite3.connect("band.db")
+        cursor = db.execute(query)
+        temp = cursor.fetchall()
+        cursor.close()
+        db.close()
+
+        valid_matric_nos = []
+        for row in temp:
+            valid_matric_nos.append(row[0])
+        
+        if matric_no not in valid_matric_nos:
+            return render_template("search/search_student_POST.html", valid=False)
+        else:
+            # valid matric_no
+            # student info
+            query = """
+            SELECT * 
+            FROM Student
+            WHERE MatricNo = ?
+            """
+            db = sqlite3.connect("band.db")
+            cursor = db.execute(query, (matric_no,))
+            student_info = cursor.fetchone()
+            cursor.close()
+            db.close()
+
+            # ownership info
+            query = """
+            SELECT StudentInstrument.AssetID
+            FROM StudentInstrument
+            WHERE MatricNo = ?
+            """
+            db = sqlite3.connect("band.db")
+            cursor = db.execute(query, (matric_no,))
+            ownership_info = cursor.fetchone()
+            cursor.close()
+            db.close()
+
+            if ownership_info == None:
+                # instru does not have an attached owner
+                owned = False
+            else:
+                owned = True
+                query = """
+                SELECT StudentInstrument.AssetID, Instrument.InstruSN, Instrument.Model, Instrument.Status
+                FROM StudentInstrument, Instrument
+                WHERE StudentInstrument.AssetID = Instrument.AssetID
+                AND StudentInstrument.MatricNo = ?
+                """
+                db = sqlite3.connect("band.db")
+                cursor = db.execute(query, (matric_no,))
+                ownership_info = cursor.fetchall()
+                cursor.close()
+                db.close()
+
+            # loan log
+            query = """
+            SELECT LoanNo, AssetID, OutDate, InDate
+            FROM Loan
+            WHERE MatricNo = ?
+            ORDER BY InDate
+            ORDER BY LoanNo
+            """
+            db = sqlite3.connect("band.db")
+            cursor = db.execute(query, (matric_no,))
+            loan_info = cursor.fetchall()
+            cursor.close()
+            db.close()
+
+            return render_template("search/search_student_POST.html", matric_no=matric_no, valid=True,\
+                student_info=student_info, owned=owned, ownership_info=ownership_info, loan_info=loan_info)
 
 @app.route("/update/")
 def update():
