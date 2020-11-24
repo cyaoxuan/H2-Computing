@@ -1,6 +1,49 @@
 from flask import Flask, render_template, url_for, request, redirect
 import sqlite3
 
+####################
+# HELPER FUNCTIONS #
+####################
+
+def valid_asset_id(asset_id):
+    # check if asset ID is valid, returns True/False
+    query = """
+    SELECT AssetID
+    FROM Instrument
+    """
+    db = sqlite3.connect("band.db")
+    cursor = db.execute(query)
+    temp = cursor.fetchall()
+    cursor.close()
+    db.close()
+
+    valid_asset_ids = []
+    for row in temp:
+        valid_asset_ids.append(row[0])
+
+    return (asset_id in valid_asset_ids)
+
+def valid_matric_no(matric_no):
+    # check if matric no is valid, returns True/False
+    query = """
+    SELECT MatricNo
+    FROM Student
+    """
+    db = sqlite3.connect("band.db")
+    cursor = db.execute(query)
+    temp = cursor.fetchall()
+    cursor.close()
+    db.close()
+
+    valid_matric_nos = []
+    for row in temp:
+        valid_matric_nos.append(row[0])
+
+    return (matric_no in valid_matric_nos)
+
+###########
+# WEB APP #
+###########
 app = Flask(__name__)
 
 @app.route("/")
@@ -80,21 +123,7 @@ def search_instrument():
     else:
         asset_id = request.form['asset_id']
 
-        # check if asset_id is valid
-        query = """
-        SELECT AssetID
-        FROM Instrument
-        """
-        db = sqlite3.connect("band.db")
-        cursor = db.execute(query)
-        temp = cursor.fetchall()
-        cursor.close()
-        db.close()
-        valid_asset_ids = []
-        for row in temp:
-            valid_asset_ids.append(row[0])
-
-        if asset_id not in valid_asset_ids:
+        if not valid_asset_id(asset_id):
             return render_template("search/search_instrument_POST.html", valid=False)
         else:
             # valid asset_id
@@ -147,7 +176,7 @@ def search_instrument():
             FROM Loan
             WHERE AssetID = ?
             ORDER BY InDate
-            ORDER BY LoanNo
+            AND LoanNo
             """
             db = sqlite3.connect("band.db")
             cursor = db.execute(query, (asset_id,))
@@ -165,22 +194,7 @@ def search_student():
     else:
         matric_no = request.form['matric_no']
 
-        # check if matric_no is valid
-        query = """
-        SELECT MatricNo
-        FROM Student
-        """
-        db = sqlite3.connect("band.db")
-        cursor = db.execute(query)
-        temp = cursor.fetchall()
-        cursor.close()
-        db.close()
-
-        valid_matric_nos = []
-        for row in temp:
-            valid_matric_nos.append(row[0])
-        
-        if matric_no not in valid_matric_nos:
+        if not valid_matric_no(matric_no):
             return render_template("search/search_student_POST.html", valid=False)
         else:
             # valid matric_no
@@ -231,7 +245,7 @@ def search_student():
             FROM Loan
             WHERE MatricNo = ?
             ORDER BY InDate
-            ORDER BY LoanNo
+            AND LoanNo
             """
             db = sqlite3.connect("band.db")
             cursor = db.execute(query, (matric_no,))
@@ -251,7 +265,32 @@ def update_instrument():
     if request.method == "GET":
         return render_template("update/update_instrument_GET.html")
     else:
-        return render_template("update/update_instrument_POST.html")
+        asset_id, remarks, status = request.form['asset_id'], request.form['remarks'], request.form['status']
+        
+        if not valid_asset_id(asset_id):
+            return render_template("update/update_instrument_POST.html", valid=False)
+        else:
+            query = """
+            UPDATE Instrument Set Remarks = ?, Status = ?
+            WHERE AssetID = ?
+            """
+            db = sqlite3.connect("band.db")
+            db.execute(query, (remarks, status, asset_id))
+            db.commit()
+            db.close()
+
+            query = """
+            SELECT * 
+            FROM Instrument
+            WHERE AssetID = ?
+            """
+            db = sqlite3.connect("band.db")
+            cursor = db.execute(query, (asset_id,))
+            new_info = cursor.fetchone()
+            cursor.close()
+            db.close()
+
+            return render_template("update/update_instrument_POST.html", asset_id=asset_id, valid=True, new_info=new_info)
 
 @app.route("/update/loan/", methods=["GET", "POST"])
 def update_loan():

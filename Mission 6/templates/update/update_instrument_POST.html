@@ -7,7 +7,34 @@
         {% extends "base.html" %}
         {% block content %}
         <h1>Update Instrument Status</h1>
-        output
+        {% if valid == False %}
+        Invalid Asset ID.
+        <p><a href="{{ url_for('update_instrument') }}">Back</a></p>
+        
+        {% else %}
+        <p>Update success!</p>
+        <p>New record for <b>{{asset_id}}</b>:</p>
+        <table border="1" width="100%">
+            <tr>
+                <th>Asset ID</th>
+                <th>Instru SN</th>
+                <th>Section</th>
+                <th>Model</th>
+                <th>Value</th>
+                <th>Remarks</th>
+                <th>Status</th>
+            </tr>
+            <tr>
+                <td>{{new_info[0]}}</td>
+                <td>{{new_info[1]}}</td>
+                <td>{{new_info[2]}}</td>
+                <td>{{new_info[3]}}</td>
+                <td>{{new_info[4]}}</td>
+                <td>{{new_info[5]}}</td>
+                <td>{{new_info[6]}}</td>
+            </tr>
+        </table>
+        {% endif %}
         {% endblock %}
     </body>
 </html>

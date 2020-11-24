@@ -7,7 +7,17 @@
         {% extends "base.html" %}
         {% block content %}
         <h1>Update Instrument Status</h1>
-        form
+        <form action="{{ url_for('update_instrument') }}" method="POST">
+            <p>Asset ID: <input type="text" name="asset_id"></p>
+            <p>Remarks: <textarea name="remarks"></textarea></p>
+            <p>Status: 
+                <select name="status">
+                    <option value="Normal">Normal</option>
+                    <option value="Condemned">Condemned</option>
+                </select>
+            </p>
+            <input type="submit" value="Update">
+        </form>
         {% endblock %}
     </body>
 </html>
