@@ -4,7 +4,16 @@
         <title>Concert Band Instrument Record</title>
     </head>
     <body>
-        <h1>Concert Band Instrument Record</h1>
-        <h2>Update</h2>
+        {% extends "base.html" %}
+        {% block content %}
+        <h1>Update</h1>
+        <ul>
+            <li><a href="{{ url_for('update_instrument') }}">Update Instrument Status</a></li>
+            <li><a href="{{ url_for('update_loan') }}">Instrument Loan</a></li>
+            <li><a href="{{ url_for('update_ownership') }}">Update Ownership Information</a></li>
+            <li><a href="{{ url_for('update_repair') }}">Instrument Repair</a></li>
+            <li><a href="{{ url_for('update_student') }}">Update Student Information</a></li>
+        </ul>
+        {% endblock %}
     </body>
 </html>

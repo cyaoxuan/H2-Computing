@@ -4,6 +4,29 @@
         <title>Concert Band Instrument Record</title>
     </head>
     <body>
-        <h1></h1>
+        {% extends "base.html" %}
+        {% block content %}
+        <h1>Stock List</h1>
+        <table border="1", width="100%">
+            <tr>
+                <th>Asset ID</th>
+                <th>Instru SN</th>
+                <th>Section</th>
+                <th>Model</th>
+                <th>Value</th>
+                <th>Status</th>
+            </tr>
+            {% for record in stock_data %}
+            <tr>
+                <td>{{record[0]}}</td>
+                <td>{{record[1]}}</td>
+                <td>{{record[2]}}</td>
+                <td>{{record[3]}}</td>
+                <td>{{record[4]}}</td>
+                <td>{{record[5]}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% endblock %}
     </body>
 </html>

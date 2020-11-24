@@ -4,7 +4,13 @@
         <title>Concert Band Instrument Record</title>
     </head>
     <body>
-        <h1>Concert Band Instrument Record</h1>
-        <h2>Search</h2>
+        {% extends "base.html" %}
+        {% block content %}
+        <h1>Search</h1>
+        <ul>
+            <li><a href="{{ url_for('search_instrument') }}">Search by Instrument</a></li>
+            <li><a href="{{ url_for('search_student') }}">Search by Student</a></li>
+        </ul>
+        {% endblock %}
     </body>
 </html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Concert Band Instrument Record</title>
+    </head>
+    <body>
+        <table border="1", width="100%">
+            <tr>
+                <th><a href="{{ url_for('home') }}">Home</a></th>
+                <th><a href="{{ url_for('display') }}">Display</a></th>
+                <th><a href="{{ url_for('search') }}">Search</th>
+                <th><a href="{{ url_for('update') }}">Update</th>
+            </tr>
+        </table>
+        {% block content %}
+        {% endblock %}
+    </body>
+</html>

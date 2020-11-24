@@ -4,13 +4,15 @@
         <title>Concert Band Instrument Record</title>
     </head>
     <body>
-        <h1>Concert Band Instrument Record</h1>
-        <h2>Display</h2>
+        {% extends "base.html" %}
+        {% block content %}
+        <h1>Display</h1>
         <ul>
-            <li><a href="{{ url_for('display_loan') }}">Display Loan</a></li>
-            <li>a</li>
-            <li>b</li>
-            <li>c</li>
+            <li><a href="{{ url_for('display_loan') }}">Loan Record</a></li>
+            <li><a href="{{ url_for('display_repair') }}">Repair Record</li>
+            <li><a href="{{ url_for('display_stock') }}">Stock List</li>
+            <li><a href="{{ url_for('display_student') }}">Student Record</li>
         </ul>
+        {% endblock %}
     </body>
 </html>
