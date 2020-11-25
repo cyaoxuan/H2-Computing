@@ -50,11 +50,7 @@ app = Flask(__name__)
 def home():
     return render_template("home.html")
 
-@app.route("/display/")
-def display():
-    return render_template("display/display.html")
-
-@app.route("/display/loan/")
+@app.route("/display_loan/")
 def display_loan():
     query = """
     SELECT Loan.LoanNo, Loan.MatricNo, Student.Name, Student.Class, Loan.AssetID, Instrument.InstruSN, Instrument.Section, Loan.OutDate, Loan.InDate
@@ -73,12 +69,12 @@ def display_loan():
 
     return render_template("display/display_loan.html", loan_data=loan_data)
 
-@app.route("/display/repair/")
+@app.route("/display_repair/")
 # TBC
 def display_repair():
     return render_template("display/display_repair.html")
 
-@app.route("/display/stock/")
+@app.route("/display_stock/")
 def display_stock():
     query = """
     SELECT *
@@ -94,7 +90,7 @@ def display_stock():
 
     return render_template("display/display_stock.html", stock_data=stock_data)
 
-@app.route("/display/student/")
+@app.route("/display_student/")
 def display_student():
     query = """
     SELECT Student.MatricNo, Student.Name, Student.Class, Student.Section, Instrument.AssetID
@@ -113,11 +109,7 @@ def display_student():
 
     return render_template("display/display_student.html", student_data=student_data)
 
-@app.route("/search/")
-def search():
-    return render_template("search/search.html")
-
-@app.route("/search/instrument/", methods=["GET", "POST"])
+@app.route("/search_instrument/", methods=["GET", "POST"])
 # repair not done
 def search_instrument():
     if request.method == "GET":
@@ -189,7 +181,7 @@ def search_instrument():
             return render_template("search/search_instrument_POST.html", asset_id=asset_id, valid=True,\
                  instru_info=instru_info, owned=owned, ownership_info=ownership_info, loan_info=loan_info)
 
-@app.route("/search/student/", methods=["GET", "POST"])
+@app.route("/search_student/", methods=["GET", "POST"])
 def search_student():
     if request.method == "GET":
         return render_template("search/search_student_GET.html")
@@ -258,11 +250,7 @@ def search_student():
             return render_template("search/search_student_POST.html", matric_no=matric_no, valid=True,\
                 student_info=student_info, owned=owned, ownership_info=ownership_info, loan_info=loan_info)
 
-@app.route("/update/")
-def update():
-    return render_template("update/update.html")
-
-@app.route("/update/instrument/", methods=["GET", "POST"])
+@app.route("/update_instrument/", methods=["GET", "POST"])
 def update_instrument():
     if request.method == "GET":
         return render_template("update/update_instrument_GET.html")
@@ -304,7 +292,7 @@ def update_instrument():
 
             return render_template("update/update_instrument_POST.html", asset_id=asset_id, valid=True, new_info=new_info)
 
-@app.route("/update/loan/", methods=["GET", "POST"])
+@app.route("/update_loan/", methods=["GET", "POST"])
 # NOT DONE
 def update_loan():
     if request.method == "GET":
@@ -312,7 +300,7 @@ def update_loan():
     else:
         return render_template("update/update_loan_POST.html")
 
-@app.route("/update/ownership/", methods=["GET", "POST"])
+@app.route("/update_ownership/", methods=["GET", "POST"])
 def update_ownership():
     if request.method == "GET":
         return render_template("update/update_ownership_GET.html")
@@ -361,7 +349,7 @@ def update_ownership():
                 return render_template("update/update_ownership_POST.html", asset_id=asset_id, matric_no=matric_no, \
                     asset_id_valid=True, matric_no_valid=True, new_info=new_info)
 
-@app.route("/update/repair/", methods=["GET", "POST"])
+@app.route("/update_repair/", methods=["GET", "POST"])
 # NOT DONE
 def update_repair():
     if request.method == "GET":
@@ -369,7 +357,7 @@ def update_repair():
     else:
         return render_template("update/update_repair_POST.html")
 
-@app.route("/update/student/", methods=["GET", "POST"])
+@app.route("/update_student/", methods=["GET", "POST"])
 def update_student():
     if request.method == "GET":
         return render_template("update/update_student_GET.html")
@@ -401,7 +389,6 @@ def update_student():
             db.close()
 
             return render_template("update/update_student_POST.html", valid=True, matric_no=matric_no, new_info=new_info)
-
 
 if __name__ == "__main__":
     app.run(debug=True)

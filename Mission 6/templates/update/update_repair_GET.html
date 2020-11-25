@@ -7,7 +7,17 @@
         {% extends "base.html" %}
         {% block content %}
         <h1>Instrument Repair</h1>
-        
+        NOT DONE
+        <h2>Send for repair</h2>
+        <form action="{{ url_for('update_repair') }}" method="POST">
+            <p>Asset ID: <input type="text" name="asset_id"></p>
+            <p>Description: <textarea name="desc"></textarea></p>
+            <p>IMAGE UPLOAD</p>
+            <p>Out Date: <input type="text" name="asset_id"></p>
+        </form>
+
+        <h2>Return from repair</h2>
+
         {% endblock %}
     </body>
 </html>
