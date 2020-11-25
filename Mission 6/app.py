@@ -1,5 +1,6 @@
 from flask import Flask, render_template, url_for, request, redirect
 import sqlite3
+import git
 
 ####################
 # HELPER FUNCTIONS #
@@ -389,6 +390,19 @@ def update_student():
             db.close()
 
             return render_template("update/update_student_POST.html", valid=True, matric_no=matric_no, new_info=new_info)
+
+#############
+# GIT STUFF #
+#############
+@app.route('/update_server', methods=['POST'])
+def webhook():
+    if request.method == 'POST':
+        repo = git.Repo('path/to/git_repo')
+        origin = repo.remotes.origin
+        origin.pull()
+        return 'Updated PythonAnywhere successfully', 200
+    else:
+        return 'Wrong event type', 400
 
 if __name__ == "__main__":
     app.run(debug=True)
