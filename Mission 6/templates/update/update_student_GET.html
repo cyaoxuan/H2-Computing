@@ -1,13 +1,24 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Concert Band Instrument Record</title>
+        <title>Update - Student - Concert Band Instrument Record</title>
     </head>
     <body>
         {% extends "base.html" %}
         {% block content %}
         <h1>Update Student Information</h1>
-        
+        <form action="{{ url_for('update_student') }}" method="POST">
+            <p>Matric No: <input type="text" name="matric_no"></p>
+            <p>Class: <input type="text" name="class_"></p>
+            <p>Section: <input type="text" name="section"></p>
+            <p>In Band?:
+                <select name="in_band">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </p>
+            <input type="submit" value="Update">
+        </form>
         {% endblock %}
     </body>
 </html>

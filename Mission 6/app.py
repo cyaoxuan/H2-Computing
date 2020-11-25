@@ -57,11 +57,12 @@ def display():
 @app.route("/display/loan/")
 def display_loan():
     query = """
-    SELECT Loan.MatricNo, Student.Name, Student.Class, Loan.AssetID, Instrument.Section, Loan.OutDate
+    SELECT Loan.LoanNo, Loan.MatricNo, Student.Name, Student.Class, Loan.AssetID, Instrument.InstruSN, Instrument.Section, Loan.OutDate, Loan.InDate
     FROM Loan, Student, Instrument
     WHERE Loan.MatricNo = Student.MatricNo
     AND Loan.AssetID = Instrument.AssetID
-    AND Loan.InDate IS NULL
+    ORDER BY Loan.InDate
+    AND Loan.LoanNo
     """
 
     db = sqlite3.connect("band.db")
@@ -117,6 +118,7 @@ def search():
     return render_template("search/search.html")
 
 @app.route("/search/instrument/", methods=["GET", "POST"])
+# repair not done
 def search_instrument():
     if request.method == "GET":
         return render_template("search/search_instrument_GET.html")
@@ -150,7 +152,7 @@ def search_instrument():
             ownership_info = cursor.fetchone()
             cursor.close()
             db.close()
-            if ownership_info == None:
+            if ownership_info[0] == None:
                 # instru does not have an attached owner
                 owned = False
             else:
@@ -270,14 +272,24 @@ def update_instrument():
         if not valid_asset_id(asset_id):
             return render_template("update/update_instrument_POST.html", valid=False)
         else:
-            query = """
-            UPDATE Instrument Set Remarks = ?, Status = ?
-            WHERE AssetID = ?
-            """
-            db = sqlite3.connect("band.db")
-            db.execute(query, (remarks, status, asset_id))
-            db.commit()
-            db.close()
+            if remarks == "":
+                query = """
+                UPDATE Instrument Set Remarks = NULL, Status = ?
+                WHERE AssetID = ?
+                """
+                db = sqlite3.connect("band.db")
+                db.execute(query, (status, asset_id))
+                db.commit()
+                db.close()
+            else:
+                query = """
+                UPDATE Instrument Set Remarks = ?, Status = ?
+                WHERE AssetID = ?
+                """
+                db = sqlite3.connect("band.db")
+                db.execute(query, (remarks, status, asset_id))
+                db.commit()
+                db.close()
 
             query = """
             SELECT * 
@@ -293,6 +305,7 @@ def update_instrument():
             return render_template("update/update_instrument_POST.html", asset_id=asset_id, valid=True, new_info=new_info)
 
 @app.route("/update/loan/", methods=["GET", "POST"])
+# NOT DONE
 def update_loan():
     if request.method == "GET":
         return render_template("update/update_loan_GET.html")
@@ -304,9 +317,52 @@ def update_ownership():
     if request.method == "GET":
         return render_template("update/update_ownership_GET.html")
     else:
-        return render_template("update/update_ownership_POST.html")
+        asset_id, matric_no = request.form['asset_id'], request.form['matric_no']
+        print(asset_id, matric_no)
+
+        if not valid_asset_id(asset_id):
+            # invalid asset id
+            return render_template("update/update_ownership_POST.html", asset_id_valid=False, matric_no_valid=True)
+        else:
+            if matric_no is not "" and not valid_matric_no(matric_no):
+                # invalid matric no, only if the field is filled
+                return render_template("update/update_ownership_POST.html", asset_id_valid=True, matric_no_valid=False)
+            else:
+                if matric_no == "":
+                    query = """
+                    UPDATE StudentInstrument Set MatricNo = NULL
+                    WHERE AssetID = ?
+                    """
+                    db = sqlite3.connect("band.db")
+                    db.execute(query, (asset_id, ))
+                    db.commit()
+                    db.close()
+                else:
+                    query = """
+                    UPDATE StudentInstrument Set MatricNo = ?
+                    WHERE AssetID = ?
+                    """
+                    db = sqlite3.connect("band.db")
+                    db.execute(query, (matric_no, asset_id))
+                    db.commit()
+                    db.close()
+
+                query = """
+                SELECT AssetID, MatricNo
+                FROM StudentInstrument
+                WHERE AssetID = ?
+                """
+                db = sqlite3.connect("band.db")
+                cursor = db.execute(query, (asset_id,))
+                new_info = cursor.fetchone()
+                cursor.close()
+                db.close()
+
+                return render_template("update/update_ownership_POST.html", asset_id=asset_id, matric_no=matric_no, \
+                    asset_id_valid=True, matric_no_valid=True, new_info=new_info)
 
 @app.route("/update/repair/", methods=["GET", "POST"])
+# NOT DONE
 def update_repair():
     if request.method == "GET":
         return render_template("update/update_repair_GET.html")
@@ -318,7 +374,34 @@ def update_student():
     if request.method == "GET":
         return render_template("update/update_student_GET.html")
     else:
-        return render_template("update/update_student_POST.html")
+        matric_no, class_, section, in_band = \
+            request.form['matric_no'], request.form['class_'], request.form['section'], request.form['in_band']
+        
+        if not valid_matric_no(matric_no):
+            return render_template("update/update_student_POST.html", valid=False)
+        else:
+            query = """
+            UPDATE Student Set Class = ?, Section = ?, InBand = ?
+            WHERE MatricNo = ?
+            """
+            db = sqlite3.connect("band.db")
+            db.execute(query, (class_, section, in_band, matric_no))
+            db.commit()
+            db.close()
+
+            query = """
+            SELECT *
+            FROM Student
+            WHERE MatricNo = ?
+            """
+            db = sqlite3.connect("band.db")
+            cursor = db.execute(query, (matric_no,))
+            new_info = cursor.fetchone()
+            cursor.close()
+            db.close()
+
+            return render_template("update/update_student_POST.html", valid=True, matric_no=matric_no, new_info=new_info)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

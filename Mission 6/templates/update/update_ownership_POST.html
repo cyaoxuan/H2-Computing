@@ -1,13 +1,36 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Concert Band Instrument Record</title>
+        <title>Update - Ownership - Concert Band Instrument Record</title>
     </head>
     <body>
         {% extends "base.html" %}
         {% block content %}
         <h1>Update Ownership Information</h1>
+        {% if asset_id_valid == False %}
+        Invalid Asset ID.
+        <p><a href="{{ url_for('update_ownership') }}">Back</a></p>
+        {% endif %}
+
+        {% if matric_no_valid == False %}
+        Invalid Matric No. Please leave field blank if you would like to clear owner data.
+        <p><a href="{{ url_for('update_ownership') }}">Back</a></p>
+        {% endif %}
         
+        {% if matric_no_valid == True and asset_id_valid == True %}
+        <p>Update success!</p>       
+        <p>New record for <b>{{asset_id}}</b>:</p>
+        <table border="1">
+            <tr>
+                <th>Asset ID</th>
+                <td>{{new_info[0]}}</td>
+            </tr>
+            <tr>
+                <th>Matric No</th>
+                <td>{{new_info[1]}}</td>
+            </tr>
+        </table> 
+        {% endif %}
         {% endblock %}
     </body>
 </html>

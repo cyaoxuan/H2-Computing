@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Concert Band Instrument Record</title>
+        <title>Update - Ownership - Concert Band Instrument Record</title>
     </head>
     <body>
         {% extends "base.html" %}
         {% block content %}
         <h1>Update Ownership Information</h1>
+        <p><i>Asset ID</i> is a compulsory field. Leave <i>Matric No</i> blank to clear the information of the owner.</p>
         <form action="{{ url_for('update_ownership') }}" method="POST">
-            <p>Asset ID: <input type="text" name="asset_id"></p>
+            <p>Asset ID*: <input type="text" name="asset_id"></p>
             <p>Matric No: <input type="text" name="matric_no"></p>
+            <input type="submit" value="Update">
         </form>
         {% endblock %}
     </body>

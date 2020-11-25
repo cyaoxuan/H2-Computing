@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Concert Band Instrument Record</title>
+        <title>Display - Stock - Concert Band Instrument Record</title>
     </head>
     <body>
         {% extends "base.html" %}
@@ -14,6 +14,7 @@
                 <th>Section</th>
                 <th>Model</th>
                 <th>Value</th>
+                <th>Remarks</th>
                 <th>Status</th>
             </tr>
             {% for record in stock_data %}
@@ -24,6 +25,7 @@
                 <td>{{record[3]}}</td>
                 <td>{{record[4]}}</td>
                 <td>{{record[5]}}</td>
+                <td>{{record[6]}}</td>
             </tr>
             {% endfor %}
         </table>
