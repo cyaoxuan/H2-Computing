@@ -41,6 +41,25 @@ def valid_matric_no(matric_no):
 
     return (matric_no in valid_matric_nos)
 
+def valid_loan_no(loan_no):
+    # check if loan no is valid for loan returns, returns True/False
+    query = """
+    SELECT LoanNo
+    FROM Loan
+    WHERE InDate IS NULL
+    """
+    db = sqlite3.connect("band.db")
+    cursor = db.execute(query)
+    temp = cursor.fetchall()
+    cursor.close()
+    db.close()
+
+    valid_loan_nos = []
+    for row in temp:
+        valid_loan_nos.append(str(row[0]))
+    
+    return (loan_no in valid_loan_nos)
+
 ###########
 # WEB APP #
 ###########
@@ -68,11 +87,6 @@ def display_loan():
     db.close()
 
     return render_template("display/display_loan.html", loan_data=loan_data)
-
-@app.route("/display_repair/")
-# TBC
-def display_repair():
-    return render_template("display/display_repair.html")
 
 @app.route("/display_stock/")
 def display_stock():
@@ -110,7 +124,6 @@ def display_student():
     return render_template("display/display_student.html", student_data=student_data)
 
 @app.route("/search_instrument/", methods=["GET", "POST"])
-# repair not done
 def search_instrument():
     if request.method == "GET":
         return render_template("search/search_instrument_GET.html")
@@ -160,9 +173,6 @@ def search_instrument():
                 ownership_info = cursor.fetchone()
                 cursor.close()
                 db.close()
-
-            # repair records
-            # TBC
 
             # loan records
             query = """
@@ -292,13 +302,98 @@ def update_instrument():
 
             return render_template("update/update_instrument_POST.html", asset_id=asset_id, valid=True, new_info=new_info)
 
-@app.route("/update_loan/", methods=["GET", "POST"])
-# NOT DONE
+@app.route("/update_loan/")
 def update_loan():
-    if request.method == "GET":
-        return render_template("update/update_loan_GET.html")
+    # GET method
+    return render_template("update/update_loan_GET.html")
+
+@app.route("/update_loan/out/", methods=["POST"])
+def update_loan_out():
+    # POST method
+    matric_no, asset_id, out_date = request.form["matric_no"], request.form["asset_id"], request.form["out_date"]
+    if not valid_matric_no(matric_no):
+        return render_template("update/update_loan_out_POST.html", asset_id_valid=True, matric_no_valid=False,\
+            valid_date=True)
+    elif not valid_asset_id(asset_id):
+        return render_template("update/update_loan_out_POST.html", asset_id_valid=False, matric_no_valid=True,\
+            valid_date=True)
+    elif out_date == "":
+        return render_template("update/update_loan_out_POST.html", asset_id_valid=True, matric_no_valid=True,\
+            valid_date=False)
     else:
-        return render_template("update/update_loan_POST.html")
+        query = """
+        INSERT INTO Loan(MatricNo, AssetID, OutDate)
+        VALUES (?,?,?)
+        """
+        db = sqlite3.connect("band.db")
+        db.execute(query, (matric_no, asset_id, out_date))
+        db.commit()
+        db.close()
+
+        query = """
+        UPDATE Instrument Set Status = 'Loaned'
+        WHERE AssetID = ?
+        """
+        db = sqlite3.connect("band.db")
+        db.execute(query, (asset_id,))
+        db.commit()
+        db.close()
+
+        query = """
+        SELECT seq
+        FROM sqlite_sequence
+        WHERE name = 'Loan'
+        """
+        db = sqlite3.connect("band.db")
+        cursor = db.execute(query)
+        loan_no = cursor.fetchone()
+        cursor.close()
+        db.close()
+
+        return render_template("update/update_loan_out_POST.html", asset_id_valid=True, matric_no_valid=True,\
+            valid_date=True, matric_no=matric_no, asset_id=asset_id, out_date=out_date, loan_no=loan_no)
+
+@app.route("/update_loan/in/", methods=["POST"])
+def update_loan_in():
+    # POST method
+    loan_no, in_date = request.form["loan_no"], request.form["in_date"]
+    if not valid_loan_no(loan_no):
+        return render_template("update/update_loan_in_POST.html", loan_no_valid=False, date_valid=True)
+    elif in_date == "":
+        return render_template("update/update_loan_in_POST.html", loan_no_valid=True, date_valid=False)
+    else:
+        query = """
+        UPDATE Loan Set InDate = ?
+        WHERE LoanNo = ?
+        """
+        db = sqlite3.connect("band.db")
+        db.execute(query, (in_date, loan_no))
+        db.commit()
+        db.close()
+
+        query = """
+        SELECT *
+        FROM Loan
+        WHERE LoanNo = ?
+        """
+        db = sqlite3.connect("band.db")
+        cursor = db.execute(query, (loan_no,))
+        loan_data = cursor.fetchone()
+        cursor.close()
+        db.close()
+
+        query = """
+        UPDATE Instrument Set Status = 'Normal'
+        WHERE AssetID = ?
+        """
+        db = sqlite3.connect("band.db")
+        db.execute(query, (loan_data[2],))
+        db.commit()
+        db.close()
+
+        print(loan_data)
+        return render_template("update/update_loan_in_POST.html", loan_no_valid=True, date_valid=True, \
+            loan_data=loan_data)
 
 @app.route("/update_ownership/", methods=["GET", "POST"])
 def update_ownership():
@@ -348,14 +443,6 @@ def update_ownership():
 
                 return render_template("update/update_ownership_POST.html", asset_id=asset_id, matric_no=matric_no, \
                     asset_id_valid=True, matric_no_valid=True, new_info=new_info)
-
-@app.route("/update_repair/", methods=["GET", "POST"])
-# NOT DONE
-def update_repair():
-    if request.method == "GET":
-        return render_template("update/update_repair_GET.html")
-    else:
-        return render_template("update/update_repair_POST.html")
 
 @app.route("/update_student/", methods=["GET", "POST"])
 def update_student():

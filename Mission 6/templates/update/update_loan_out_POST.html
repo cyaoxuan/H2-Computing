@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Update - Loan - Concert Band Instrument Record</title>
+    </head>
+    <body>
+        {% extends "base.html" %}
+        {% block content %}
+        <h1>Loan Instrument</h1>
+        {% if matric_no_valid == False %}
+        Invalid Matric No.
+        <p><a href="{{ url_for('update_loan') }}">Back</a></p>
+        {% endif %}
+        
+        {% if asset_id_valid == False %}
+        Invalid Asset ID.
+        <p><a href="{{ url_for('update_loan') }}">Back</a></p>
+        {% endif %}
+
+        {% if valid_date == False %}
+        Invalid Date.
+        <p><a href="{{ url_for('update_loan') }}">Back</a></p>
+        {% endif %}
+        
+        {% if matric_no_valid == True and asset_id_valid == True and valid_date == True %}
+        <p>Loan success!</p>
+        <p>Your loan number is <b>{{loan_no[0]}}</b>. Please use it when returning, or get it from the Search page.</p>
+        {% endif %}
+        {% endblock %}
+    </body>
+</html>

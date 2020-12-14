@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Update - Loan - Concert Band Instrument Record</title>
+    </head>
+    <body>
+        {% extends "base.html" %}
+        {% block content %}
+        <h1>Loan Instrument</h1>
+        {% if loan_no_valid == False %}
+        Invalid Loan No.
+        <p><a href="{{ url_for('update_loan') }}">Back</a></p>
+        {% endif %}
+
+        {% if date_valid == False %}
+        Invalid Date.
+        <p><a href="{{ url_for('update_loan') }}">Back</a></p>
+        {% endif %}
+        
+        {% if loan_no_valid == True and date_valid == True %}
+        <p>Loan return success!</p>
+        <p>The loan you returned was:</p>
+        <table width="100%" border="1" style="text-align:center">
+            <tr>
+                <th>Loan No</th>
+                <th>Matric No</th>
+                <th>Asset ID</th>
+                <th>Out Date</th>
+                <th>In Date</th>
+            </tr>
+            <tr>
+                <td>{{ loan_data[0] }}</td>
+                <td>{{ loan_data[1] }}</td>
+                <td>{{ loan_data[2] }}</td>
+                <td>{{ loan_data[3] }}</td>
+                <td>{{ loan_data[4] }}</td>
+            </tr>
+        </table>
+        {% endif %}
+        {% endblock %}
+    </body>
+</html>

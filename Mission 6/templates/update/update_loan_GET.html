@@ -7,19 +7,18 @@
         {% extends "base.html" %}
         {% block content %}
         <h1>Loan Instrument</h1>
-        NOT DONE
         <h2>Loan Out</h2>
-        <form action="{{ url_for('update_loan') }}" method="POST">
+        <form action="{{ url_for('update_loan_out') }}" method="POST">
             <p>Matric No: <input type="text" name="matric_no"></p>
             <p>Asset ID: <input type="text" name="asset_id"></p>
-            <p>Out Date: <input type="text" name="out_date"></p>
+            <p>Out Date: <input type="date" name="out_date"></p>
             <input type="submit" value="Loan">
         </form>
         
         <h2>Return Instrument</h2>
-        <form action="{{ url_for('update_loan') }}" method="POST">
+        <form action="{{ url_for('update_loan_in') }}" method="POST">
             <p>Loan No: <input type="text" name="loan_no"></p>
-            <p>In Date: <input type="text" name="in_date"></p>
+            <p>In Date: <input type="date" name="in_date"></p>
             <input type="submit" value="Return">
         </form>
         {% endblock %}

@@ -8,7 +8,27 @@
         {% block content %}
         <h1>Concert Band Instrument Record</h1>
         <p>What would you like to do today?</p>
-        Provide a quick guide about what each functionality does
+        <h2>Display</h2>
+        Get all information from the database directly.
+        <ul>
+            <li><a href="display/display_loan.html">Loan Records</a> (To check active loans, or trace previous loans)</li>
+            <li><a href="display/display_stock.html">Stock List</a> (For stock check)</li>
+            <li><a href="display/display_student.html">Student Record</a> (Get all student information)</li>
+        </ul>
+        <h2>Search</h2>
+        Get information specific to an instrument or student.
+        <ul>
+            <li><a href="search/search_instrument_GET.html">Search by Instrument</a> (Get info on instrument, onership and loan log)</li>
+            <li><a href="search/search_student_GET.html">Search by Student</a> (Get info on student, instruments owned and loan log)</li>
+        </ul>
+        <h2>Update</h2>
+        Update the database or make a loan.
+        <ul>
+            <li><a href="update/update_instrument_GET.html">Update Instrument Status</a> (To add remarks and condemn instruments)</li>
+            <li><a href="update/update_ownership_GET.html">Update Ownership Information</a> (To change or remove the owner of an instrument)</li>
+            <li><a href="update/update_student_GET.html">Update Student Information</a> (To change student's class, section, and whether they are in band annually)</li>
+            <li><a href="update/update_loan_GET.html">Instrument Loan</a> (Loan or return instruments)</li>
+        </ul>
         {% endblock %}
     </body>
 </html>
